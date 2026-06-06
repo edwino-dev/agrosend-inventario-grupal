@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Agrosend - Sistema de Gestión de Inventario Agrícola">
+    <title>Agrosend - Inventario Agrícola</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <div class="container-main">
+        <!-- Barra de Navegación -->
+        <nav class="navbar">
+            <div class="navbar-container">
+                <div class="navbar-logo">
+                    <span class="logo-icon">🌾</span>
+                    <span class="logo-text">Agrosend</span>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#dashboard" class="nav-link active" data-section="dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#productos" class="nav-link" data-section="productos">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#ventas" class="nav-link" data-section="ventas">Ventas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#mercado" class="nav-link" data-section="mercado">Mercado</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#clientes" class="nav-link" data-section="clientes">Clientes</a>
+                    </li>
+                    <li class="nav-item user-menu">
+                        <button class="nav-link user-btn" id="user-menu-btn">
+                            <span id="user-name">Usuario</span>
+                            <span class="dropdown-icon">▼</span>
+                        </button>
+                        <ul class="dropdown-menu" id="user-dropdown">
+                            <li><a href="#perfil" data-section="perfil">Mi Perfil</a></li>
+                            <li><a href="#configuracion" data-section="configuracion">Configuración</a></li>
+                            <li><hr></li>
+                            <li><a href="#" id="logout-btn">Cerrar Sesión</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Contenedor Principal -->
+        <main class="main-content">
+            <!-- Dashboard -->
+            <section id="dashboard" class="section active">
+                <div class="section-header">
+                    <h1>Dashboard</h1>
+                    <p class="section-subtitle">Resumen de inventario y ventas</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Cards Estadísticas -->
+                    <div class="card stat-card">
+                        <div class="card-icon">📦</div>
+                        <div class="card-content">
+                            <h3>Productos</h3>
+                            <p class="stat-value" id="total-productos">0</p>
+                        </div>
+                    </div>
+
+                    <div class="card stat-card">
+                        <div class="card-icon">💹</div>
+                        <div class="card-content">
+                            <h3>Ventas Hoy</h3>
+                            <p class="stat-value" id="ventas-hoy">$0</p>
+                        </div>
+                    </div>
+
+                    <div class="card stat-card">
+                        <div class="card-icon">👥</div>
+                        <div class="card-content">
+                            <h3>Clientes</h3>
+                            <p class="stat-value" id="total-clientes">0</p>
+                        </div>
+                    </div>
+
+                    <div class="card stat-card">
+                        <div class="card-icon">⚠️</div>
+                        <div class="card-content">
+                            <h3>Stock Bajo</h3>
+                            <p class="stat-value" id="stock-bajo">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráfico de Stock -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Stock de Productos</h2>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="grafico-stock" width="600" height="300"></canvas>
+                    </div>
+                </div>
+
+                <!-- Tabla de Productos -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Inventario</h2>
+                        <input 
+                            type="text" 
+                            id="busqueda-producto" 
+                            class="search-input" 
+                            placeholder="Buscar producto..."
+                        >
+                    </div>
+                    <div class="card-body">
+                        <table id="tabla-productos" class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Stock</th>
+                                    <th>Precio</th>
+                                    <th>Categoría</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-productos-body">
+                                <tr>
+                                    <td colspan="6" class="text-center">Cargando datos...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Productos -->
+            <section id="productos" class="section">
+                <div class="section-header">
+                    <h1>Gestión de Productos</h1>
+                    <button class="btn btn-primary" id="btn-nuevo-producto">+ Nuevo Producto</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Productos Registrados</h2>
+                        <input 
+                            type="text" 
+                            id="busqueda-productos-list" 
+                            class="search-input" 
+                            placeholder="Buscar..."
+                        >
+                    </div>
+                    <div class="card-body">
+                        <table id="productos-table" class="table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Stock</th>
+                                    <th>Precio</th>
+                                    <th>Categoría</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productos-body">
+                                <tr>
+                                    <td colspan="5" class="text-center">Cargando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modal Nuevo Producto -->
+                <div id="modal-producto" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 id="modal-titulo">Nuevo Producto</h2>
+                            <button class="modal-close" id="modal-close-producto">&times;</button>
+                        </div>
+                        <form id="form-producto" class="form">
+                            <div class="form-group">
+                                <label for="producto-nombre">Nombre *</label>
+                                <input 
+                                    type="text" 
+                                    id="producto-nombre" 
+                                    required
+                                    placeholder="Nombre del producto"
+                                >
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="producto-stock">Stock *</label>
+                                    <input 
+                                        type="number" 
+                                        id="producto-stock" 
+                                        required
+                                        min="0"
+                                        placeholder="0"
+                                    >
+                                </div>
+                                <div class="form-group">
+                                    <label for="producto-precio">Precio *</label>
+                                    <input 
+                                        type="number" 
+                                        id="producto-precio" 
+                                        required
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="0.00"
+                                    >
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="producto-categoria">Categoría *</label>
+                                <select id="producto-categoria" required>
+                                    <option value="">Seleccionar categoría</option>
+                                    <option value="verduras">Verduras</option>
+                                    <option value="frutas">Frutas</option>
+                                    <option value="granos">Granos</option>
+                                    <option value="lacteos">Lácteos</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                <button type="button" class="btn btn-secondary" id="btn-cancelar-producto">Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Ventas -->
+            <section id="ventas" class="section">
+                <div class="section-header">
+                    <h1>Gestión de Ventas</h1>
+                    <button class="btn btn-primary" id="btn-nueva-venta">+ Nueva Venta</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Ventas Recientes</h2>
+                        <input 
+                            type="text" 
+                            id="busqueda-ventas" 
+                            class="search-input" 
+                            placeholder="Buscar venta..."
+                        >
+                    </div>
+                    <div class="card-body">
+                        <table id="ventas-table" class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Cliente</th>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Total</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ventas-body">
+                                <tr>
+                                    <td colspan="7" class="text-center">Cargando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modal Nueva Venta -->
+                <div id="modal-venta" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Nueva Venta</h2>
+                            <button class="modal-close" id="modal-close-venta">&times;</button>
+                        </div>
+                        <form id="form-venta" class="form">
+                            <div class="form-group">
+                                <label for="venta-cliente">Cliente *</label>
+                                <select id="venta-cliente" required>
+                                    <option value="">Seleccionar cliente</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="venta-producto">Producto *</label>
+                                <select id="venta-producto" required>
+                                    <option value="">Seleccionar producto</option>
+                                </select>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="venta-cantidad">Cantidad *</label>
+                                    <input 
+                                        type="number" 
+                                        id="venta-cantidad" 
+                                        required
+                                        min="1"
+                                        placeholder="1"
+                                    >
+                                </div>
+                                <div class="form-group">
+                                    <label for="venta-total">Total</label>
+                                    <input 
+                                        type="number" 
+                                        id="venta-total" 
+                                        disabled
+                                        placeholder="$0.00"
+                                    >
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Registrar Venta</button>
+                                <button type="button" class="btn btn-secondary" id="btn-cancelar-venta">Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Comparación de Mercado -->
+            <section id="mercado" class="section">
+                <div class="section-header">
+                    <h1>Comparación de Mercado</h1>
+                    <button class="btn btn-primary" id="btn-actualizar-mercado">🔄 Actualizar</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Precios de Mercado</h2>
+                        <input 
+                            type="text" 
+                            id="busqueda-mercado" 
+                            class="search-input" 
+                            placeholder="Buscar producto..."
+                        >
+                    </div>
+                    <div class="card-body">
+                        <table id="mercado-table" class="table">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Precio Nuestro</th>
+                                    <th>Precio Mercado</th>
+                                    <th>Diferencia</th>
+                                    <th>Competitividad</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mercado-body">
+                                <tr>
+                                    <td colspan="5" class="text-center">Cargando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Clientes -->
+            <section id="clientes" class="section">
+                <div class="section-header">
+                    <h1>Gestión de Clientes</h1>
+                    <button class="btn btn-primary" id="btn-nuevo-cliente">+ Nuevo Cliente</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Clientes Registrados</h2>
+                        <input 
+                            type="text" 
+                            id="busqueda-clientes" 
+                            class="search-input" 
+                            placeholder="Buscar cliente..."
+                        >
+                    </div>
+                    <div class="card-body">
+                        <table id="clientes-table" class="table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Email</th>
+                                    <th>Teléfono</th>
+                                    <th>Compras</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clientes-body">
+                                <tr>
+                                    <td colspan="5" class="text-center">Cargando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modal Nuevo Cliente -->
+                <div id="modal-cliente" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 id="modal-titulo-cliente">Nuevo Cliente</h2>
+                            <button class="modal-close" id="modal-close-cliente">&times;</button>
+                        </div>
+                        <form id="form-cliente" class="form">
+                            <div class="form-group">
+                                <label for="cliente-nombre">Nombre Completo *</label>
+                                <input 
+                                    type="text" 
+                                    id="cliente-nombre" 
+                                    required
+                                    placeholder="Nombre"
+                                >
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="cliente-email">Email *</label>
+                                    <input 
+                                        type="email" 
+                                        id="cliente-email" 
+                                        required
+                                        placeholder="email@example.com"
+                                    >
+                                </div>
+                                <div class="form-group">
+                                    <label for="cliente-telefono">Teléfono</label>
+                                    <input 
+                                        type="tel" 
+                                        id="cliente-telefono" 
+                                        placeholder="+1234567890"
+                                    >
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="cliente-direccion">Dirección</label>
+                                <textarea 
+                                    id="cliente-direccion" 
+                                    placeholder="Dirección completa"
+                                    rows="3"
+                                ></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                <button type="button" class="btn btn-secondary" id="btn-cancelar-cliente">Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Perfil -->
+            <section id="perfil" class="section">
+                <div class="section-header">
+                    <h1>Mi Perfil</h1>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Información Personal</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="perfil-grid">
+                            <div class="form-group">
+                                <label>Nombre</label>
+                                <p id="perfil-nombre" class="perfil-value">-</p>
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <p id="perfil-email" class="perfil-value">-</p>
+                            </div>
+                            <div class="form-group">
+                                <label>Rol</label>
+                                <p id="perfil-rol" class="perfil-value">-</p>
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha de Registro</label>
+                                <p id="perfil-fecha" class="perfil-value">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Configuración -->
+            <section id="configuracion" class="section">
+                <div class="section-header">
+                    <h1>Configuración</h1>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Preferencias del Sistema</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="settings-group">
+                            <label class="setting-item">
+                                <input type="checkbox" id="tema-oscuro" class="checkbox">
+                                <span>Tema Oscuro</span>
+                            </label>
+                            <label class="setting-item">
+                                <input type="checkbox" id="notificaciones" class="checkbox" checked>
+                                <span>Notificaciones</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Contenedor de Mensajes -->
+    <div id="mensaje-dashboard"></div>
+
+    <!-- Indicador de Carga -->
+    <div id="loading-dashboard"></div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/productos.js"></script>
+    <script src="js/ventas.js"></script>
+    <script src="js/mercado.js"></script>
+    <script src="js/clientes.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
